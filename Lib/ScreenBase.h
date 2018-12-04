@@ -1,0 +1,73 @@
+#pragma once
+#include <kvs/ScreenBase>
+#include <kvs/Timer>
+#include "GLFW.h"
+
+
+namespace kvs
+{
+
+class MouseEvent;
+class WheelEvent;
+class KeyEvent;
+
+namespace glfw
+{
+
+class Application;
+
+class ScreenBase : public kvs::ScreenBase
+{
+    typedef kvs::ScreenBase BaseClass;
+
+private:
+    GLFWwindow* m_handler; ///< glfw window handler
+    int m_id; ///< window ID
+    kvs::MouseEvent* m_mouse_event; ///< mouse event
+    kvs::KeyEvent* m_key_event; ///< key event
+    kvs::WheelEvent* m_wheel_event; ///< wheel event
+    kvs::Timer m_elapse_time_counter; ///< elapse time counter for double click event
+    bool m_is_fullscreen; ///< check flag whether the window is fullscreen
+
+public:
+    ScreenBase( kvs::glfw::Application* application );
+    virtual ~ScreenBase();
+
+    GLFWwindow* handler() { return m_handler; }
+    int id() const { return m_id; }
+
+    virtual void create();
+    virtual void show();
+    virtual void hide();
+    virtual void showFullScreen();
+    virtual void showNormal();
+    virtual void popUp();
+    virtual void pushDown();
+    virtual void redraw();
+    virtual void resize( int width, int height );
+    virtual bool isFullScreen() const;
+    virtual void enable();
+    virtual void disable();
+    virtual void reset();
+
+    virtual void initializeEvent();
+    virtual void paintEvent();
+    virtual void resizeEvent( int width, int height );
+    virtual void mousePressEvent( kvs::MouseEvent* event );
+    virtual void mouseMoveEvent( kvs::MouseEvent* event );
+    virtual void mouseReleaseEvent( kvs::MouseEvent* event );
+    virtual void mouseDoubleClickEvent( kvs::MouseEvent* event );
+    virtual void wheelEvent( kvs::WheelEvent* event );
+    virtual void keyPressEvent( kvs::KeyEvent* event );
+
+private:
+    friend void WindowSizeCallback( GLFWwindow* handler, int width, int height );
+    friend void MouseButtonCallback( GLFWwindow* handler, int button, int action, int mods );
+    friend void CursorPosCallback( GLFWwindow* handler, double x, double y );
+    friend void ScrollCallback( GLFWwindow* handler, double x, double y );
+    friend void KeyCallback( GLFWwindow* handler, int key, int scancode, int action, int mods );
+};
+
+} // end of namespace glfw
+
+} // end of namespace kvs
