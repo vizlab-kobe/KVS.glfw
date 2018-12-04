@@ -15,7 +15,7 @@
 #include <kvs/KeyEvent>
 #include <kvs/WheelEvent>
 #include <kvs/EventHandler>
-//#include <kvs/TimerEventListener>
+#include <kvs/TimerEventListener>
 #include <kvs/PaintEventListener>
 #include <kvs/ResizeEventListener>
 #include <kvs/MousePressEventListener>
@@ -33,10 +33,9 @@
 //#include <kvs/glut/Application>
 //#include <kvs/glfw/Application>
 #include "Application.h"
-//#include <kvs/glut/Timer>
+#include "Timer.h"
 
 
-#if 0
 namespace
 {
 
@@ -47,16 +46,16 @@ namespace
 /*===========================================================================*/
 class IdleMouseEvent : public kvs::TimerEventListener
 {
-    kvs::glut::Screen* m_screen; ///< pointer to the screen (reference only)
+    kvs::glfw::Screen* m_screen; ///< pointer to the screen (reference only)
 
 public:
 
-    IdleMouseEvent( kvs::glut::Screen* screen ): m_screen( screen ) {}
+    IdleMouseEvent( kvs::glfw::Screen* screen ): m_screen( screen ) {}
     void update( kvs::TimeEvent* ) { m_screen->idleMouseEvent(); }
 };
 
 }
-#endif
+
 
 namespace kvs
 {
@@ -80,8 +79,10 @@ Screen::Screen( kvs::glfw::Application* application ):
     m_enable_default_key_press_event( true )
 {
     m_scene = new kvs::Scene( this );
-//    m_idle_mouse_event_listener = new ::IdleMouseEvent( this );
-//    m_idle_mouse_timer = new kvs::glut::Timer( m_idle_mouse_event_listener );
+
+    m_idle_mouse_event_listener = new ::IdleMouseEvent( this );
+    m_idle_mouse_timer = new kvs::glfw::Timer( 10 );
+    BaseClass::addTimerEvent( m_idle_mouse_event_listener, m_idle_mouse_timer );
 }
 
 /*===========================================================================*/
@@ -92,8 +93,8 @@ Screen::Screen( kvs::glfw::Application* application ):
 Screen::~Screen()
 {
     delete m_scene;
-//    delete m_idle_mouse_event_listener;
-//    delete m_idle_mouse_timer;
+    delete m_idle_mouse_event_listener;
+    delete m_idle_mouse_timer;
 }
 
 /*===========================================================================*/
@@ -336,16 +337,13 @@ void Screen::reset()
 /*===========================================================================*/
 void Screen::initializeEvent()
 {
-//    const int interval = 10; // in msec.
-//    m_idle_mouse_timer->start( interval );
-
-//    std::list<kvs::glut::Timer*>::iterator timer = BaseClass::timerEventHandler().begin();
-//    std::list<kvs::glut::Timer*>::iterator end = BaseClass::timerEventHandler().end();
-//    while ( timer != end )
-//    {
-//        (*timer)->start();
-//        ++timer;
-//    }
+    std::list<kvs::glfw::Timer*>::iterator timer = BaseClass::timerEventHandler().begin();
+    std::list<kvs::glfw::Timer*>::iterator end = BaseClass::timerEventHandler().end();
+    while ( timer != end )
+    {
+        (*timer)->start();
+        ++timer;
+    }
 
     kvs::InitializeEvent event;
     BaseClass::eventHandler()->notify( &event );
@@ -364,12 +362,8 @@ void Screen::paintEvent()
         kvs::PaintEvent event;
         BaseClass::eventHandler()->notify( &event );
     }
-//    glutSwapBuffers();
-    glfwSwapBuffers( BaseClass::handler() );
 
-//#if defined( KVS_GL_HAS_LAYER_BACKED_VIEW )
-//    glutPostRedisplay();
-//#endif
+    glfwSwapBuffers( BaseClass::handler() );
 }
 
 /*===========================================================================*/

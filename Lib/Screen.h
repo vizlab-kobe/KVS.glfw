@@ -43,8 +43,8 @@ private:
     bool m_enable_default_wheel_event; ///< flag for default wheel event
     bool m_enable_default_key_press_event; ///< flag for default key press event
     kvs::Scene* m_scene; ///< default scene
-//    kvs::glut::Timer* m_idle_mouse_timer; ///< timer for idle mouse event
-//    kvs::TimerEventListener* m_idle_mouse_event_listener; ///< idle mouse event listener
+    kvs::glfw::Timer* m_idle_mouse_timer; ///< timer for idle mouse event
+    kvs::TimerEventListener* m_idle_mouse_event_listener; ///< idle mouse event listener
 
 public:
     Screen( kvs::glfw::Application* application = 0 );

@@ -1,7 +1,9 @@
 #pragma once
 #include <kvs/ScreenBase>
 #include <kvs/Timer>
+#include <list>
 #include "GLFW.h"
+#include "Timer.h"
 
 
 namespace kvs
@@ -10,6 +12,7 @@ namespace kvs
 class MouseEvent;
 class WheelEvent;
 class KeyEvent;
+class TimerEventListener;
 
 namespace glfw
 {
@@ -28,6 +31,7 @@ private:
     kvs::WheelEvent* m_wheel_event; ///< wheel event
     kvs::Timer m_elapse_time_counter; ///< elapse time counter for double click event
     bool m_is_fullscreen; ///< check flag whether the window is fullscreen
+    std::list<kvs::glfw::Timer*> m_timer_event_handler; ///< timer list for timer events
 
 public:
     ScreenBase( kvs::glfw::Application* application );
@@ -66,6 +70,12 @@ private:
     friend void CursorPosCallback( GLFWwindow* handler, double x, double y );
     friend void ScrollCallback( GLFWwindow* handler, double x, double y );
     friend void KeyCallback( GLFWwindow* handler, int key, int scancode, int action, int mods );
+
+#if 1 // KVS_ENABLE_DEPRECATED
+public:
+    std::list<kvs::glfw::Timer*>& timerEventHandler();
+    void addTimerEvent( kvs::TimerEventListener* event, kvs::glfw::Timer* timer );
+#endif
 };
 
 } // end of namespace glfw

@@ -3,6 +3,7 @@
 #include "KVSMouseButton.h"
 #include "KVSKey.h"
 #include <kvs/Message>
+#include <kvs/TimerEventListener>
 
 
 namespace
@@ -82,7 +83,6 @@ void CursorPosCallback( GLFWwindow* handler, double x, double y )
 void ScrollCallback( GLFWwindow* handler, double x, double y )
 {
     kvs::glfw::ScreenBase* this_screen = ::ThisScreen( handler );
-
     this_screen->m_wheel_event->setPosition( x, y );
     this_screen->m_wheel_event->setDirection( y > 0.0 ? 1 : -1 );
     this_screen->wheelEvent( this_screen->m_wheel_event );
@@ -142,6 +142,7 @@ void ScreenBase::create()
     }
 
     glfwMakeContextCurrent( m_handler );
+    glfwSwapInterval(1);
 
     // Set callback functions.
     glfwSetWindowUserPointer( m_handler, this );
@@ -210,6 +211,7 @@ void ScreenBase::pushDown()
 void ScreenBase::redraw()
 {
     this->paintEvent();
+//    glfwPostEmptyEvent();
 }
 
 void ScreenBase::resize( int width, int height )
@@ -235,6 +237,18 @@ void ScreenBase::mouseReleaseEvent( kvs::MouseEvent* ){}
 void ScreenBase::mouseDoubleClickEvent( kvs::MouseEvent* ){}
 void ScreenBase::wheelEvent( kvs::WheelEvent* ){}
 void ScreenBase::keyPressEvent( kvs::KeyEvent* ){}
+
+std::list<kvs::glfw::Timer*>& ScreenBase::timerEventHandler()
+{
+    return m_timer_event_handler;
+}
+
+void ScreenBase::addTimerEvent( kvs::TimerEventListener* event, kvs::glfw::Timer* timer )
+{
+    event->setScreen( this );
+    timer->setEventListener( event );
+    m_timer_event_handler.push_back( timer );
+}
 
 } // end of namespace glfw
 

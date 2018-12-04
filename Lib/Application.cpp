@@ -11,6 +11,16 @@
 #endif
 
 
+namespace
+{
+
+void ErrorCallback( int error, const char* message )
+{
+    kvsMessageError() << "GLFW error: " << std::string( message ) << std::endl;
+}
+
+}
+
 namespace kvs
 {
 
@@ -42,6 +52,8 @@ int Application::run()
     static bool flag = true;
     if ( flag )
     {
+        glfwSetErrorCallback( ::ErrorCallback );
+
         // Call initialize event function for each screen.
         std::list<kvs::ScreenBase*>::iterator screen = screens().begin();
         std::list<kvs::ScreenBase*>::iterator end = screens().end();
@@ -74,16 +86,33 @@ void Application::main_loop()
 {
     while ( !this->should_close() )
     {
+        bool focused = false;
+
         std::list<kvs::ScreenBase*>::iterator screen = screens().begin();
         std::list<kvs::ScreenBase*>::iterator end = screens().end();
         while ( screen != end )
         {
-            GLFWwindow* window = static_cast<kvs::glfw::ScreenBase*>(*screen)->handler();
+            kvs::glfw::ScreenBase* s = static_cast<kvs::glfw::ScreenBase*>(*screen);
+            GLFWwindow* window = s->handler();
             glfwMakeContextCurrent( window );
-            if ( glfwGetWindowAttrib( window, GLFW_FOCUSED ) ) { glfwPollEvents(); }
+
+            std::list<kvs::glfw::Timer*>::iterator timer = s->timerEventHandler().begin();
+            while ( timer != s->timerEventHandler().end() )
+            {
+                (*timer)->timerEvent();
+                timer++;
+            }
+
+            if ( glfwGetWindowAttrib( window, GLFW_FOCUSED ) )
+            {
+                glfwPollEvents();
+                focused = true;
+            }
 
             screen++;
         }
+
+//        if ( !focused ) { glfwPollEvents(); }
     }
 }
 
