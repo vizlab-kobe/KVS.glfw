@@ -8,7 +8,6 @@
 #include <objc/message.h>
 #define GLFW_EXPOSE_NATIVE_NSGL
 #include <GLFW/glfw3native.h>
-//#include <OpenGL/OpenGL.h>
 #endif
 
 
@@ -41,12 +40,6 @@ Application::Application( int argc, char** argv ):
         }
         flag = false;
         atexit( glfwTerminate );
-
-//#ifdef __APPLE__
-//        GLint sync = 0;
-//        CGLContextObj ctx = CGLGetCurrentContext();
-//        CGLSetParameter( ctx, kCGLCPSwapInterval, &sync );
-//#endif
     }
 }
 
