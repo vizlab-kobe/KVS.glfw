@@ -24,9 +24,27 @@ namespace glfw
 
 void WindowSizeCallback( GLFWwindow* handler, int width, int height )
 {
+//    std::cout << "WindowSizeCallback( " << width << ", " << height << " )" << std::endl;
+
     kvs::glfw::ScreenBase* this_screen = ::ThisScreen( handler );
     this_screen->resizeEvent( width, height );
+//    kvs::OpenGL::SetViewport( 0, 0, width * 2, height * 2 );
     this_screen->redraw();
+//    this_screen->setSize( width, height );
+}
+
+void FramebufferSizeCallback( GLFWwindow* handler, int width, int height )
+{
+//    std::cout << "FramebufferSizeCallback( " << width << ", " << height << " )" << std::endl;
+
+//    kvs::glfw::ScreenBase* this_screen = ::ThisScreen( handler );
+//    this_screen->resizeEvent( width, height );
+//    kvs::OpenGL::SetViewport( 0, 0, width, height );
+//    this_screen->redraw();
+//    int width, height;
+//    glfwGetFramebufferSize(this_screen->handler(), &width, &height);
+//    this_screen->setSize( width, height );
+//    glViewport(0, 0, width, height);
 }
 
 void MouseButtonCallback( GLFWwindow* handler, int button, int action, int mods )
@@ -147,6 +165,7 @@ void ScreenBase::create()
     // Set callback functions.
     glfwSetWindowUserPointer( m_handler, this );
     glfwSetWindowSizeCallback( m_handler, WindowSizeCallback );
+    glfwSetFramebufferSizeCallback( m_handler, FramebufferSizeCallback );
     glfwSetMouseButtonCallback( m_handler, MouseButtonCallback );
     glfwSetCursorPosCallback( m_handler, CursorPosCallback );
     glfwSetScrollCallback( m_handler, ScrollCallback );

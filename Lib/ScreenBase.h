@@ -66,6 +66,7 @@ public:
 
 private:
     friend void WindowSizeCallback( GLFWwindow* handler, int width, int height );
+    friend void FramebufferSizeCallback( GLFWwindow* handler, int width, int height );
     friend void MouseButtonCallback( GLFWwindow* handler, int button, int action, int mods );
     friend void CursorPosCallback( GLFWwindow* handler, double x, double y );
     friend void ScrollCallback( GLFWwindow* handler, double x, double y );
