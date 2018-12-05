@@ -3,6 +3,7 @@
 #include <kvs/StructuredVolumeObject>
 #include <kvs/StructuredVolumeImporter>
 #include <kvs/PolygonObject>
+#include <kvs/PolygonRenderer>
 #include <kvs/Isosurface>
 #include <kvs/HydrogenVolumeData>
 #include <kvs/RayCastingRenderer>
@@ -35,7 +36,7 @@ int main( int argc, char** argv )
 
     {
         screen1.registerObject( volume, new kvs::glsl::RayCastingRenderer );
-//        screen1.registerObject( volume, new kvs::RayCastingRenderer );
+///        screen1.registerObject( volume, new kvs::RayCastingRenderer );
     }
 
     {
@@ -44,7 +45,9 @@ int main( int argc, char** argv )
         const bool d = false;
         const kvs::TransferFunction t( 256 );
         kvs::PolygonObject* object = new kvs::Isosurface( volume, i, n, d, t );
-        screen2.registerObject( object );
+        kvs::glsl::PolygonRenderer* renderer = new kvs::glsl::PolygonRenderer();
+        screen2.registerObject( object, renderer );
+//        screen2.registerObject( object );
     }
 
     // Timer.

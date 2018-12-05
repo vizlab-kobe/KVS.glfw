@@ -24,8 +24,16 @@ namespace glfw
 
 void WindowSizeCallback( GLFWwindow* handler, int width, int height )
 {
+    const kvs::Vec4 vp = kvs::OpenGL::Viewport();
+
     kvs::glfw::ScreenBase* this_screen = ::ThisScreen( handler );
     this_screen->resizeEvent( width, height );
+
+    if ( this_screen->width() != ( vp[2] - vp[0] ) ) // device_pixel_ratio != 1.0
+    {
+        kvs::OpenGL::SetViewport( vp );
+    }
+
     this_screen->redraw();
 }
 
@@ -147,7 +155,6 @@ void ScreenBase::create()
     // Set callback functions.
     glfwSetWindowUserPointer( m_handler, this );
     glfwSetWindowSizeCallback( m_handler, WindowSizeCallback );
-    glfwSetFramebufferSizeCallback( m_handler, FramebufferSizeCallback );
     glfwSetMouseButtonCallback( m_handler, MouseButtonCallback );
     glfwSetCursorPosCallback( m_handler, CursorPosCallback );
     glfwSetScrollCallback( m_handler, ScrollCallback );
