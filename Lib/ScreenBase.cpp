@@ -175,7 +175,8 @@ void KeyCallback( GLFWwindow* handler, int key, int scancode, int action, int mo
     glfwGetCursorPos( handler, &x, &y );
 
     this_screen->m_key_event->setPosition( int( x ), int( y ) );
-    this_screen->m_key_event->setKey( kvs::glfw::KVSKey::Code( key ) );
+    this_screen->m_key_event->setModifiers( kvs::glfw::KVSKey::Modifier( mods ) );
+    this_screen->m_key_event->setKey( kvs::glfw::KVSKey::Code( key, mods ) );
     this_screen->keyPressEvent( this_screen->m_key_event );
 
     this_screen->releaseContext();

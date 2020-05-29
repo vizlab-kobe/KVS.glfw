@@ -17,12 +17,13 @@ namespace glfw
 class KVSKey
 {
 public:
-    static int Code( const int key );
+    static int Code( const int key, const int mods );
     static int Modifier( const int modifier );
 };
 
-inline int KVSKey::Code( const int key )
+inline int KVSKey::Code( const int key, const int mods )
 {
+    const bool shift = ( mods == GLFW_MOD_SHIFT );
     switch ( key )
     {
     case GLFW_KEY_ESCAPE:     return kvs::Key::Escape;
@@ -50,32 +51,34 @@ inline int KVSKey::Code( const int key )
     case GLFW_KEY_7:          return kvs::Key::Seven;
     case GLFW_KEY_8:          return kvs::Key::Eight;
     case GLFW_KEY_9:          return kvs::Key::Nine;
-    case GLFW_KEY_A:          return kvs::Key::a;
-    case GLFW_KEY_B:          return kvs::Key::b;
-    case GLFW_KEY_C:          return kvs::Key::c;
-    case GLFW_KEY_D:          return kvs::Key::d;
-    case GLFW_KEY_E:          return kvs::Key::e;
-    case GLFW_KEY_F:          return kvs::Key::f;
-    case GLFW_KEY_G:          return kvs::Key::g;
-    case GLFW_KEY_H:          return kvs::Key::h;
-    case GLFW_KEY_I:          return kvs::Key::i;
-    case GLFW_KEY_J:          return kvs::Key::j;
-    case GLFW_KEY_K:          return kvs::Key::k;
-    case GLFW_KEY_L:          return kvs::Key::l;
-    case GLFW_KEY_M:          return kvs::Key::m;
-    case GLFW_KEY_N:          return kvs::Key::n;
-    case GLFW_KEY_O:          return kvs::Key::o;
-    case GLFW_KEY_P:          return kvs::Key::p;
-    case GLFW_KEY_Q:          return kvs::Key::q;
-    case GLFW_KEY_R:          return kvs::Key::r;
-    case GLFW_KEY_S:          return kvs::Key::s;
-    case GLFW_KEY_T:          return kvs::Key::t;
-    case GLFW_KEY_U:          return kvs::Key::u;
-    case GLFW_KEY_V:          return kvs::Key::v;
-    case GLFW_KEY_W:          return kvs::Key::w;
-    case GLFW_KEY_X:          return kvs::Key::x;
-    case GLFW_KEY_Y:          return kvs::Key::y;
-    case GLFW_KEY_Z:          return kvs::Key::z;
+
+    case GLFW_KEY_A:          return shift ? kvs::Key::A : kvs::Key::a;
+    case GLFW_KEY_B:          return shift ? kvs::Key::B : kvs::Key::b;
+    case GLFW_KEY_C:          return shift ? kvs::Key::C : kvs::Key::c;
+    case GLFW_KEY_D:          return shift ? kvs::Key::D : kvs::Key::d;
+    case GLFW_KEY_E:          return shift ? kvs::Key::E : kvs::Key::e;
+    case GLFW_KEY_F:          return shift ? kvs::Key::F : kvs::Key::f;
+    case GLFW_KEY_G:          return shift ? kvs::Key::G : kvs::Key::g;
+    case GLFW_KEY_H:          return shift ? kvs::Key::H : kvs::Key::h;
+    case GLFW_KEY_I:          return shift ? kvs::Key::I : kvs::Key::i;
+    case GLFW_KEY_J:          return shift ? kvs::Key::J : kvs::Key::j;
+    case GLFW_KEY_K:          return shift ? kvs::Key::K : kvs::Key::k;
+    case GLFW_KEY_L:          return shift ? kvs::Key::L : kvs::Key::l;
+    case GLFW_KEY_M:          return shift ? kvs::Key::M : kvs::Key::m;
+    case GLFW_KEY_N:          return shift ? kvs::Key::N : kvs::Key::n;
+    case GLFW_KEY_O:          return shift ? kvs::Key::O : kvs::Key::o;
+    case GLFW_KEY_P:          return shift ? kvs::Key::P : kvs::Key::p;
+    case GLFW_KEY_Q:          return shift ? kvs::Key::Q : kvs::Key::q;
+    case GLFW_KEY_R:          return shift ? kvs::Key::R : kvs::Key::r;
+    case GLFW_KEY_S:          return shift ? kvs::Key::S : kvs::Key::s;
+    case GLFW_KEY_T:          return shift ? kvs::Key::T : kvs::Key::t;
+    case GLFW_KEY_U:          return shift ? kvs::Key::U : kvs::Key::u;
+    case GLFW_KEY_V:          return shift ? kvs::Key::V : kvs::Key::v;
+    case GLFW_KEY_W:          return shift ? kvs::Key::W : kvs::Key::w;
+    case GLFW_KEY_X:          return shift ? kvs::Key::X : kvs::Key::x;
+    case GLFW_KEY_Y:          return shift ? kvs::Key::Y : kvs::Key::y;
+    case GLFW_KEY_Z:          return shift ? kvs::Key::Z : kvs::Key::z;
+
     case GLFW_KEY_F1:         return kvs::Key::F1;
     case GLFW_KEY_F2:         return kvs::Key::F2;
     case GLFW_KEY_F3:         return kvs::Key::F3;
