@@ -1,7 +1,12 @@
+/*****************************************************************************/
+/**
+ *  @file   Screen.cpp
+ *  @author Naohisa Sakamoto
+ */
+/*****************************************************************************/
 #include "Screen.h"
 #include <cstdlib>
 #include <kvs/OpenGL>
-//#include <kvs/glut/GLUT>
 #include <kvs/RGBColor>
 #include <kvs/Camera>
 #include <kvs/Light>
@@ -30,8 +35,6 @@
 #include <kvs/ObjectBase>
 #include <kvs/RendererBase>
 #include <kvs/VisualizationPipeline>
-//#include <kvs/glut/Application>
-//#include <kvs/glfw/Application>
 #include "Application.h"
 #include "Timer.h"
 
@@ -49,7 +52,6 @@ class IdleMouseEvent : public kvs::TimerEventListener
     kvs::glfw::Screen* m_screen; ///< pointer to the screen (reference only)
 
 public:
-
     IdleMouseEvent( kvs::glfw::Screen* screen ): m_screen( screen ) {}
     void update( kvs::TimeEvent* ) { m_screen->idleMouseEvent(); }
 };
@@ -79,7 +81,6 @@ Screen::Screen( kvs::glfw::Application* application ):
     m_enable_default_key_press_event( true )
 {
     m_scene = new kvs::Scene( this );
-
     m_idle_mouse_event_listener = new ::IdleMouseEvent( this );
     m_idle_mouse_timer = new kvs::glfw::Timer( 10 );
     BaseClass::addTimerEvent( m_idle_mouse_event_listener, m_idle_mouse_timer );
@@ -160,6 +161,13 @@ void Screen::setBackgroundColor( const kvs::RGBColor& color )
     m_scene->background()->setColor( color );
 }
 
+/*===========================================================================*/
+/**
+ *  @brief  Sets background colors
+ *  @param  color1 [in] the color at the top side of the screen
+ *  @param  color2 [in] the color at the bottom side of the screen
+ */
+/*===========================================================================*/
 void Screen::setBackgroundColor( const kvs::RGBColor& color1, const kvs::RGBColor& color2 )
 {
     m_scene->background()->setColor( color1, color2 );
@@ -295,7 +303,6 @@ const std::pair<int,int> Screen::registerObject( kvs::VisualizationPipeline* pip
 /*===========================================================================*/
 void Screen::create()
 {
-//    kvs::glut::ScreenBase::create();
     BaseClass::create();
     m_scene->initializeFunction();
 }

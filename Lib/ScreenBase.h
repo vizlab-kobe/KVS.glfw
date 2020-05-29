@@ -1,3 +1,9 @@
+/*****************************************************************************/
+/**
+ *  @file   ScreenBase.h
+ *  @author Naohisa Sakamoto
+ */
+/*****************************************************************************/
 #pragma once
 #include <kvs/ScreenBase>
 #include <kvs/Timer>
@@ -19,8 +25,14 @@ namespace glfw
 
 class Application;
 
+/*===========================================================================*/
+/**
+ *  @brief  Base class of screen based on GLFW.
+ */
+/*===========================================================================*/
 class ScreenBase : public kvs::ScreenBase
 {
+    friend class kvs::glfw::Application;
     typedef kvs::ScreenBase BaseClass;
 
 private:
@@ -63,6 +75,10 @@ public:
     virtual void mouseDoubleClickEvent( kvs::MouseEvent* event );
     virtual void wheelEvent( kvs::WheelEvent* event );
     virtual void keyPressEvent( kvs::KeyEvent* event );
+
+protected:
+    void aquireContext() { glfwMakeContextCurrent( m_handler ); }
+    void releaseContext() { glfwMakeContextCurrent( NULL ); }
 
 private:
     friend void WindowSizeCallback( GLFWwindow* handler, int width, int height );

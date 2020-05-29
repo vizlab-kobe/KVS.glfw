@@ -11,7 +11,27 @@
 #include <KVS.glfw/Lib/Application.h>
 #include <KVS.glfw/Lib/Screen.h>
 #include <KVS.glfw/Lib/Timer.h>
+#include <kvs/glut/Application>
+#include <kvs/glut/Screen>
 
+#include <kvs/KeyPressEventListener>
+class KeyPressEvent : public kvs::KeyPressEventListener
+{
+    void update( kvs::KeyEvent* event )
+    {
+        switch ( event->key() )
+        {
+        case kvs::Key::One:
+            screen()->showFullScreen();
+            break;
+        case kvs::Key::Two:
+            screen()->showNormal();
+            break;
+        default:
+            break;
+        }
+    }
+};
 
 class TimerEvent : public kvs::TimerEventListener
 {
@@ -23,11 +43,15 @@ class TimerEvent : public kvs::TimerEventListener
 
 int main( int argc, char** argv )
 {
+#if 1
     kvs::glfw::Application app( argc, argv );
-
     kvs::glfw::Screen screen1( &app );
     kvs::glfw::Screen screen2( &app );
-
+#else
+    kvs::glut::Application app( argc, argv );
+    kvs::glut::Screen screen1( &app );
+    kvs::glut::Screen screen2( &app );
+#endif
     screen1.setTitle("A");
     screen2.setTitle("B");
 
@@ -51,10 +75,15 @@ int main( int argc, char** argv )
     }
 
     // Timer.
-    TimerEvent timer_event;
-    int msec = 1000;
-    kvs::glfw::Timer timer( msec );
+//    TimerEvent timer_event;
+//    int msec = 1000;
+//    kvs::glfw::Timer timer( msec );
 //    screen1.addTimerEvent( &timer_event, &timer );
+
+    KeyPressEvent key_event1;
+    KeyPressEvent key_event2;
+    screen1.addEvent( &key_event1 );
+    screen2.addEvent( &key_event2 );
 
     screen1.show();
     screen2.show();

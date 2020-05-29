@@ -1,19 +1,26 @@
+/*****************************************************************************/
+/**
+ *  @file   Application.cpp
+ *  @author Naohisa Sakamoto
+ */
+/*****************************************************************************/
 #include "Application.h"
 #include "GLFW.h"
 #include "ScreenBase.h"
 #include <kvs/Message>
 #include <cstdlib>
 
-#if defined( KVS_GL_HAS_LAYER_BACKED_VIEW )
-#include <objc/message.h>
-#define GLFW_EXPOSE_NATIVE_NSGL
-#include <GLFW/glfw3native.h>
-#endif
-
 
 namespace
 {
 
+/*===========================================================================*/
+/**
+ *  @brief  Callback function, which is called when an error occurs.
+ *  @param  error [in] error code
+ *  @param  message [in] error message
+ */
+/*===========================================================================*/
 void ErrorCallback( int error, const char* message )
 {
     kvsMessageError() << "GLFW error: " << std::string( message ) << std::endl;
@@ -27,6 +34,13 @@ namespace kvs
 namespace glfw
 {
 
+/*===========================================================================*/
+/**
+ *  @brief  Constructs a new Application class.
+ *  @param  argc [in] argument count
+ *  @param  argv [in] argument values
+ */
+/*===========================================================================*/
 Application::Application( int argc, char** argv ):
     kvs::ApplicationBase( argc, argv )
 {
@@ -43,10 +57,21 @@ Application::Application( int argc, char** argv ):
     }
 }
 
+/*===========================================================================*/
+/**
+ *  @brief  Destructs the application class.
+ */
+/*===========================================================================*/
 Application::~Application()
 {
 }
 
+/*===========================================================================*/
+/**
+ *  @brief  Runs the application.
+ *  @return true, if the application has been executed successfully
+ */
+/*===========================================================================*/
 int Application::run()
 {
     static bool flag = true;
@@ -55,21 +80,13 @@ int Application::run()
         glfwSetErrorCallback( ::ErrorCallback );
 
         // Call initialize event function for each screen.
-        std::list<kvs::ScreenBase*>::iterator screen = screens().begin();
-        std::list<kvs::ScreenBase*>::iterator end = screens().end();
-        while ( screen != end )
+        for ( auto& screen : screens() )
         {
-#if defined( KVS_GL_HAS_LAYER_BACKED_VIEW )
-            glfwPollEvents();
-            GLFWwindow* window = static_cast<kvs::glfw::ScreenBase*>(*screen)->handler();
-            glfwMakeContextCurrent( window );
-            objc_msgSend( glfwGetNSGLContext( window ), sel_registerName( "update" ) );
-#endif
-            static_cast<kvs::glfw::ScreenBase*>(*screen)->initializeEvent();
-            static_cast<kvs::glfw::ScreenBase*>(*screen)->paintEvent();
-
-            screen++;
+            static_cast<kvs::glfw::ScreenBase*>(screen)->aquireContext();
+            static_cast<kvs::glfw::ScreenBase*>(screen)->initializeEvent();
+            static_cast<kvs::glfw::ScreenBase*>(screen)->releaseContext();
         }
+
         this->main_loop();
         flag = false;
     }
@@ -77,30 +94,37 @@ int Application::run()
     return true;
 }
 
+/*===========================================================================*/
+/**
+ *  @brief  Quits the application.
+ */
+/*===========================================================================*/
 void Application::quit()
 {
     exit( EXIT_SUCCESS );
 }
 
+/*===========================================================================*/
+/**
+ *  @brief  Main application loop.
+ */
+/*===========================================================================*/
 void Application::main_loop()
 {
     while ( !this->should_close() )
     {
         bool focused = false;
-
-        std::list<kvs::ScreenBase*>::iterator screen = screens().begin();
-        std::list<kvs::ScreenBase*>::iterator end = screens().end();
-        while ( screen != end )
+        for ( auto& screen : screens() )
         {
-            kvs::glfw::ScreenBase* s = static_cast<kvs::glfw::ScreenBase*>(*screen);
-            GLFWwindow* window = s->handler();
+            auto* s = static_cast<kvs::glfw::ScreenBase*>(screen);
+            auto* window = s->handler();
             glfwMakeContextCurrent( window );
 
-            std::list<kvs::glfw::Timer*>::iterator timer = s->timerEventHandler().begin();
-            while ( timer != s->timerEventHandler().end() )
+            s->paintEvent();
+
+            for ( auto& timer : s->timerEventHandler() )
             {
-                (*timer)->timerEvent();
-                timer++;
+                timer->timerEvent();
             }
 
             if ( glfwGetWindowAttrib( window, GLFW_FOCUSED ) )
@@ -109,40 +133,40 @@ void Application::main_loop()
                 focused = true;
             }
 
-            screen++;
+            glfwMakeContextCurrent( NULL );
         }
 
         if ( !focused ) { glfwPollEvents(); }
     }
 }
 
+/*===========================================================================*/
+/**
+ *  @brief  Checks the close flags of the registered screens.
+ *  @return true, if all of the screens have been closed.
+ */
+/*===========================================================================*/
 bool Application::should_close()
 {
     if ( screens().empty() ) { return true; }
 
     std::list<kvs::ScreenBase*> screen_list;
     {
-        std::list<kvs::ScreenBase*>::iterator screen = screens().begin();
-        std::list<kvs::ScreenBase*>::iterator end = screens().end();
-        while ( screen != end )
+        for ( auto& screen : screens() )
         {
-            GLFWwindow* window = static_cast<kvs::glfw::ScreenBase*>(*screen)->handler();
+            auto* window = static_cast<kvs::glfw::ScreenBase*>(screen)->handler();
             if ( glfwWindowShouldClose( window ) )
             {
-                screen_list.push_back( *screen );
+                screen_list.push_back( screen );
             }
-            screen++;
         }
     }
 
     if ( !screen_list.empty() )
     {
-        std::list<kvs::ScreenBase*>::iterator screen = screen_list.begin();
-        std::list<kvs::ScreenBase*>::iterator end = screen_list.end();
-        while ( screen != end )
+        for ( auto& screen : screens() )
         {
-            screens().remove( *screen );
-            screen++;
+            screens().remove( screen );
         }
     }
 
