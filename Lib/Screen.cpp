@@ -67,6 +67,30 @@ namespace glfw
 
 /*===========================================================================*/
 /**
+ *  @brief  Returns the pointer to the glfw screen downcasted from the screen base.
+ *  @param  screen [in] the screen base.
+ *  @return pointer to the glfw screen
+ */
+/*===========================================================================*/
+Screen* Screen::DownCast( kvs::ScreenBase* screen )
+{
+    return dynamic_cast<Screen*>( screen );
+}
+
+/*===========================================================================*/
+/**
+ *  @brief  Returns the const pointer to the glfw screen downcasted from the screen base.
+ *  @param  screen [in] the screen base.
+ *  @return const pointer to the glfw screen
+ */
+/*===========================================================================*/
+const Screen* Screen::DownCast( const kvs::ScreenBase* screen )
+{
+    return dynamic_cast<Screen*>( const_cast<kvs::ScreenBase*>( screen ) );
+}
+
+/*===========================================================================*/
+/**
  *  @brief  Constructs a new Screen class.
  */
 /*===========================================================================*/
@@ -286,8 +310,8 @@ const std::pair<int,int> Screen::registerObject( kvs::VisualizationPipeline* pip
 {
     // WARNING: It is necessary to increment the reference counter of the
     // pipeline.object() and the pipeline.renderer().
-    kvs::ObjectBase* object = const_cast<kvs::ObjectBase*>( pipeline->object() );
-    kvs::RendererBase* renderer = const_cast<kvs::RendererBase*>( pipeline->renderer() );
+    auto* object = const_cast<kvs::ObjectBase*>( pipeline->object() );
+    auto* renderer = const_cast<kvs::RendererBase*>( pipeline->renderer() );
 
     const int object_id = m_scene->objectManager()->insert( object );
     const int renderer_id = m_scene->rendererManager()->insert( renderer );
@@ -344,14 +368,7 @@ void Screen::reset()
 /*===========================================================================*/
 void Screen::initializeEvent()
 {
-    std::list<kvs::glfw::Timer*>::iterator timer = BaseClass::timerEventHandler().begin();
-    std::list<kvs::glfw::Timer*>::iterator end = BaseClass::timerEventHandler().end();
-    while ( timer != end )
-    {
-        (*timer)->start();
-        ++timer;
-    }
-
+    for ( auto& timer : BaseClass::timerEventHandler() ) { timer->start(); }
     kvs::InitializeEvent event;
     BaseClass::eventHandler()->notify( &event );
 }
@@ -608,8 +625,8 @@ void Screen::defaultWheelEvent( kvs::WheelEvent* event )
     BaseClass::eventHandler()->notify( event );
     if ( !m_scene->isActiveMove( event->x(), event->y() ) ) return;
 
-    if ( event->direction() > 0 ) { m_scene->wheelFunction( 10 ); }
-    else { m_scene->wheelFunction( -10 ); }
+    if ( event->direction() > 0 ) { m_scene->wheelFunction( 50 ); }
+    else { m_scene->wheelFunction( -50 ); }
 
     m_scene->updateXform();
     BaseClass::redraw();

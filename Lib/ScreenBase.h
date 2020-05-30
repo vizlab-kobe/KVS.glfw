@@ -35,6 +35,10 @@ class ScreenBase : public kvs::ScreenBase
     friend class kvs::glfw::Application;
     typedef kvs::ScreenBase BaseClass;
 
+public:
+    static ScreenBase* DownCast( kvs::ScreenBase* screen );
+    static const ScreenBase* DownCast( const kvs::ScreenBase* screen );
+
 private:
     GLFWwindow* m_handler; ///< glfw window handler
     int m_id; ///< window ID

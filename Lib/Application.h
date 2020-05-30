@@ -21,6 +21,8 @@ namespace glfw
 /*===========================================================================*/
 class Application : public kvs::ApplicationBase
 {
+    using BaseClass = kvs::ApplicationBase;
+
 public:
     Application( int argc, char** argv );
     virtual ~Application();

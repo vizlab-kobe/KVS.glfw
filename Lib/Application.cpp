@@ -80,11 +80,12 @@ int Application::run()
         glfwSetErrorCallback( ::ErrorCallback );
 
         // Call initialize event function for each screen.
-        for ( auto& screen : screens() )
+        for ( auto& s : BaseClass::screens() )
         {
-            static_cast<kvs::glfw::ScreenBase*>(screen)->aquireContext();
-            static_cast<kvs::glfw::ScreenBase*>(screen)->initializeEvent();
-            static_cast<kvs::glfw::ScreenBase*>(screen)->releaseContext();
+            auto* screen = kvs::glfw::ScreenBase::DownCast( s );
+            screen->aquireContext();
+            screen->initializeEvent();
+            screen->releaseContext();
         }
 
         this->main_loop();
@@ -114,26 +115,24 @@ void Application::main_loop()
     while ( !this->should_close() )
     {
         bool focused = false;
-        for ( auto& screen : screens() )
+        for ( auto& s : BaseClass::screens() )
         {
-            auto* s = static_cast<kvs::glfw::ScreenBase*>(screen);
-            auto* window = s->handler();
-            glfwMakeContextCurrent( window );
+            auto* screen = kvs::glfw::ScreenBase::DownCast( s );
+            screen->aquireContext();
+            screen->paintEvent();
 
-            s->paintEvent();
-
-            for ( auto& timer : s->timerEventHandler() )
+            for ( auto& t : screen->timerEventHandler() )
             {
-                timer->timerEvent();
+                t->timerEvent();
             }
 
-            if ( glfwGetWindowAttrib( window, GLFW_FOCUSED ) )
+            if ( glfwGetWindowAttrib( screen->handler(), GLFW_FOCUSED ) )
             {
                 glfwPollEvents();
                 focused = true;
             }
 
-            glfwMakeContextCurrent( NULL );
+            screen->releaseContext();
         }
 
         if ( !focused ) { glfwPollEvents(); }
@@ -151,26 +150,24 @@ bool Application::should_close()
     if ( screens().empty() ) { return true; }
 
     std::list<kvs::ScreenBase*> screen_list;
+    for ( auto& s : BaseClass::screens() )
     {
-        for ( auto& screen : screens() )
+        auto* screen = kvs::glfw::ScreenBase::DownCast( s );
+        if ( glfwWindowShouldClose( screen->handler() ) )
         {
-            auto* window = static_cast<kvs::glfw::ScreenBase*>(screen)->handler();
-            if ( glfwWindowShouldClose( window ) )
-            {
-                screen_list.push_back( screen );
-            }
+            screen_list.push_back( s );
         }
     }
 
     if ( !screen_list.empty() )
     {
-        for ( auto& screen : screens() )
+        for ( auto& s : BaseClass::screens() )
         {
-            screens().remove( screen );
+            BaseClass::screens().remove( s );
         }
     }
 
-    if ( screens().empty() ) { return true; }
+    if ( BaseClass::screens().empty() ) { return true; }
 
     return false;
 }

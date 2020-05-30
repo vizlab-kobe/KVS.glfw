@@ -37,6 +37,30 @@ namespace glfw
 
 /*===========================================================================*/
 /**
+ *  @brief  Returns the pointer to the glfw screen base downcasted from the screen base.
+ *  @param  screen [in] the screen base.
+ *  @return pointer to the glfw screen base
+ */
+/*===========================================================================*/
+ScreenBase* ScreenBase::DownCast( kvs::ScreenBase* screen )
+{
+    return dynamic_cast<ScreenBase*>( screen );
+}
+
+/*===========================================================================*/
+/**
+ *  @brief  Returns the const pointer to the glfw screen base downcasted from the screen base.
+ *  @param  screen [in] the screen base.
+ *  @return const pointer to the glfw screen base
+ */
+/*===========================================================================*/
+const ScreenBase* ScreenBase::DownCast( const kvs::ScreenBase* screen )
+{
+    return dynamic_cast<ScreenBase*>( const_cast<kvs::ScreenBase*>( screen ) );
+}
+
+/*===========================================================================*/
+/**
  *  @brief  Callback function, which is called when the window is resized.
  *  @param  handler [in] the window handler
  *  @param  width [in] the window width
