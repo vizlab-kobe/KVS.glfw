@@ -13,7 +13,6 @@ int main( int argc, char** argv )
 
     auto* volume = new kvs::HydrogenVolumeData( kvs::Vec3u( 64, 64, 64 ) );
     auto* object = new kvs::Isosurface( volume );
-//    auto* renderer = new kvs::glsl::PolygonRenderer();
     auto* renderer = new kvs::PolygonRenderer();
     screen.registerObject( object, renderer );
     screen.create();
