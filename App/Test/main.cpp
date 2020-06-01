@@ -8,9 +8,9 @@
 #include <kvs/HydrogenVolumeData>
 #include <kvs/RayCastingRenderer>
 #include <kvs/TimerEventListener>
-#include <KVS.glfw/Lib/Application.h>
-#include <KVS.glfw/Lib/Screen.h>
-#include <KVS.glfw/Lib/Timer.h>
+#include <kvs/glfw/Application>
+#include <kvs/glfw/Screen>
+#include <kvs/glfw/Timer>
 #include <kvs/glut/Application>
 #include <kvs/glut/Screen>
 
@@ -70,8 +70,8 @@ int main( int argc, char** argv )
         const kvs::TransferFunction t( 256 );
         kvs::PolygonObject* object = new kvs::Isosurface( volume, i, n, d, t );
         kvs::glsl::PolygonRenderer* renderer = new kvs::glsl::PolygonRenderer();
-        screen2.registerObject( object, renderer );
-//        screen2.registerObject( object );
+//        screen2.registerObject( object, renderer );
+        screen2.registerObject( object );
     }
 
     // Timer.
